@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46/"
 vim.g.mapleader = " "
 
@@ -36,3 +37,13 @@ require "nvchad.autocmds"
 vim.schedule(function()
     require "mappings"
 end)
+=======
+vim.g.mapleader = " "
+vim.g.maplocalleader = ","
+vim.opt.number = true
+vim.opt.relativenumber = true
+
+
+require("config.lazy")
+require("config.keymaps")
+>>>>>>> c1f17ca (Initial commit)
