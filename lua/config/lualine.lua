@@ -7,16 +7,20 @@ require("lualine").setup({
         theme = "tokyonight",
         component_separators = '',
         section_separators = { left = '', right = '' },
-        disabled_filetypes = { "neo-tree" },     -- disables it for neo-tree
+        globalstatus = true,
+        -- disabled_filetypes = { "neo-tree" }, -- disables it for neo-tree
     },
 
     sections = {
         lualine_a = { { 'mode', separator = { left = '' }, right_padding = 2 } },
         lualine_b = { directory, "filename", "filetype" },
         lualine_c = {
-            '%=', --[[ add your center components here in place of this comment ]]
+            {
+                require("noice").api.status.message.get_hl,
+                cond = require("noice").api.status.message.has,
+            },
         },
-        lualine_x = { "diagnostics" },
+        lualine_x = { "lsp_progress", "diagnostics" },
         lualine_y = { "diff", "branch" },
         lualine_z = {
             "progress",

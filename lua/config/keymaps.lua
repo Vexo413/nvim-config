@@ -1,8 +1,8 @@
 local map = vim.keymap.set
 
 -- nvimtree
-map("n", "<C-n>", "<cmd>NvimTreeToggle<CR>", { desc = "nvimtree toggle window" })
-map("n", "<leader>e", "<cmd>NvimTreeFocus<CR>", { desc = "nvimtree focus window" })
+map("n", "<C-n>", "<cmd>Neotree toggle<CR>", { desc = "neotree toggle window" })
+map("n", "<leader>e", "<cmd>Neotree reveal<CR>", { desc = "neotree focus window" })
 
 map("i", "<C-b>", "<ESC>^i", { desc = "move beginning of line" })
 map("i", "<C-e>", "<End>", { desc = "move end of line" })

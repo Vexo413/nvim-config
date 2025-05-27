@@ -1,53 +1,33 @@
-return
-{
-    "nvim-tree/nvim-tree.lua",
-    cmd = { "NvimTreeToggle", "NvimTreeFocus" },
+return {
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
     dependencies = {
-        {
-            "windwp/nvim-autopairs",
-            opts = {
-                fast_wrap = {},
-                disable_filetype = { "TelescopePrompt", "vim" },
-            },
-            config = function(_, opts)
-                require("nvim-autopairs").setup(opts)
-
-                -- setup cmp for autopairs
-                local cmp_autopairs = require "nvim-autopairs.completion.cmp"
-                require("cmp").event:on("confirm_done", cmp_autopairs.on_confirm_done())
-            end,
-        }
+        "nvim-lua/plenary.nvim",
+        "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+        "MunifTanjim/nui.nvim",
+        -- {"3rd/image.nvim", opts = {}}, -- Optional image support in preview window: See `# Preview Mode` for more information
     },
+    lazy = false, -- neo-tree will lazily load itself
+    ---@module "neo-tree"
+    ---@type neotree.Config?
     opts = {
-        filters = { dotfiles = true },
-        disable_netrw = true,
-        hijack_cursor = true,
-        sync_root_with_cwd = true,
-        update_focused_file = {
-            enable = true,
-            update_root = false,
-        },
-        view = {
-            width = 30,
-            preserve_window_proportions = true,
-        },
-        renderer = {
-            root_folder_label = false,
-            highlight_git = true,
-            indent_markers = { enable = true },
-            icons = {
-                glyphs = {
-                    default = "󰈚",
-                    folder = {
-                        default = "",
-                        empty = "",
-                        empty_open = "",
-                        open = "",
-                        symlink = "",
-                    },
-                    git = { unmerged = "" },
+        popup_border_style = "",
+        default_component_configs = {
+            git_status = {
+                symbols = {
+                    -- Change type
+                    added = "",    -- or "✚", but this is redundant info if you use git_status_colors on the name
+                    modified = "", -- or "", but this is redundant info if you use git_status_colors on the name
+                    deleted = "",  -- this can only be used in the git_status source
+                    renamed = "",  -- this can only be used in the git_status source
+                    -- Status type
+                    untracked = "",
+                    ignored = "",
+                    unstaged = "",
+                    staged = "",
+                    conflict = "",
                 },
             },
         },
-    }
+    },
 }
