@@ -5,15 +5,32 @@ end
 require("lualine").setup({
     options = {
         theme = "tokyonight",
-        section_separators = { left = "", right = "" }, -- rounded block edges
-        component_separators = { left = "", right = "" }, -- thinner round edges
+        component_separators = '',
+        section_separators = { left = '', right = '' },
+        disabled_filetypes = { "neo-tree" },     -- disables it for neo-tree
     },
+
     sections = {
-        lualine_a = { "mode" },           -- left: mode
-        lualine_b = { directory },        -- left: directory
-        lualine_c = { "branch", "diff" }, -- left: git
-        lualine_x = { "location" },       -- right: diagnostics
-        lualine_y = { "diagnostics" },    -- right: location
-        lualine_z = {},
+        lualine_a = { { 'mode', separator = { left = '' }, right_padding = 2 } },
+        lualine_b = { directory, "filename", "filetype" },
+        lualine_c = {
+            '%=', --[[ add your center components here in place of this comment ]]
+        },
+        lualine_x = { "diagnostics" },
+        lualine_y = { "diff", "branch" },
+        lualine_z = {
+            "progress",
+            { "location", separator = { right = '' }, left_padding = 2 },
+        },
     },
+    inactive_sections = {
+        lualine_a = { 'filename' },
+        lualine_b = {},
+        lualine_c = {},
+        lualine_x = {},
+        lualine_y = {},
+        lualine_z = { 'location' },
+    },
+    tabline = {},
+    extensions = {},
 })
