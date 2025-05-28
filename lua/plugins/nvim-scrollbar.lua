@@ -1,3 +1,4 @@
 return {
-    "petertriho/nvim-scrollbar"
+  "petertriho/nvim-scrollbar",
+  lazy = false,
 }
