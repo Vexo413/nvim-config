@@ -9,6 +9,18 @@ local g = vim.g
 -------------------------------------- options ------------------------------------------
 o.winborder = "rounded"
 
+opt.foldmethod = "indent" -- or your preferred method
+opt.foldenable = true
+opt.foldlevel = 99
+opt.foldlevelstart = 99
+opt.foldcolumn = "1" -- always show fold column
+
+opt.fillchars:append({
+  foldopen = "", -- icon for open fold
+  foldclose = "", -- icon for closed fold
+  fold = " ", -- avoid ugly dashes
+})
+
 o.laststatus = 3
 o.showmode = false
 

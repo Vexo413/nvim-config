@@ -1,8 +1,7 @@
 local map = vim.keymap.set
 
--- nvimtree
-map("n", "<C-n>", "<cmd>Neotree toggle<CR>", { desc = "neotree toggle window" })
-map("n", "<leader>e", "<cmd>Neotree reveal<CR>", { desc = "neotree focus window" })
+-- file explorer
+map("n", "<leader>e", function() Snacks.explorer() end, { desc = "neotree focus window" })
 
 map("i", "<C-b>", "<ESC>^i", { desc = "move beginning of line" })
 map("i", "<C-e>", "<End>", { desc = "move end of line" })
@@ -25,7 +24,7 @@ map("n", "<leader>n", "<cmd>set nu!<CR>", { desc = "toggle line number" })
 map("n", "<leader>rn", "<cmd>set rnu!<CR>", { desc = "toggle relative number" })
 
 map({ "n", "x" }, "<leader>fm", function()
-    require("conform").format { lsp_fallback = true }
+  require("conform").format { lsp_fallback = true }
 end, { desc = "general format file" })
 
 -- global lsp mappings
@@ -36,47 +35,44 @@ map("n", "<leader>/", "gcc", { desc = "toggle comment", remap = true })
 map("v", "<leader>/", "gc", { desc = "toggle comment", remap = true })
 
 --
-map("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
-map("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
-map("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, { desc = "Add workspace folder" })
-map("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, { desc = "Remove workspace folder" })
-
-map("n", "<leader>wl", function()
-    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-end, { desc = "List workspace folders" })
+map("n", "gd", function() Snacks.picker.lsp_definitions() end, { desc = "Goto Definition" })
+map("n", "gD", function() Snacks.picker.lsp_declarations() end, { desc = "Goto Declaration" })
+map("n", "gr", function() Snacks.picker.lsp_references() end, { nowait = true, desc = "References" })
+map("n", "gI", function() Snacks.picker.lsp_implementations() end, { desc = "Goto Implementation" })
+map("n", "gy", function() Snacks.picker.lsp_type_definitions() end, { desc = "Goto T[y]pe Definition" })
+map("n", "<leader>ss", function() Snacks.picker.lsp_symbols() end, { desc = "LSP Symbols" })
+map("n", "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end, { desc = "LSP Workspace Symbols" })
 
 
 -- telescope
-map("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", { desc = "telescope live grep" })
-map("n", "<leader>fb", "<cmd>Telescope buffers<CR>", { desc = "telescope find buffers" })
-map("n", "<leader>fm", "<cmd>Telescope marks<CR>", { desc = "telescope find marks" })
-map("n", "<leader>fc", "<cmd>Telescope current_buffer_fuzzy_find<CR>", { desc = "telescope find in current buffer" })
-map("n", "<leader>cm", "<cmd>Telescope git_commits<CR>", { desc = "telescope git commits" })
-map("n", "<leader>ff", "<cmd>Telescope find_files follow=true no_ignore=true hidden=true<cr>",
-    { desc = "telescope find files" })
+map("n", "<leader>fs", function() Snacks.picker.smart() end, { desc = "smart find" })
+map("n", "<leader>ff", function() Snacks.picker.files() end, { desc = "file find" })
+map("n", "<leader>fg", function() Snacks.picker.grep() end, { desc = "grep find" })
+map("n", "<leader>fb", function() Snacks.picker.buffers() end, { desc = "buffer find" })
+map("n", "<leader>fm", function() Snacks.picker.marks() end, { desc = "mark find" })
 
 
 -- bufferline
 
 map("n", "<leader>bd", function()
-    local cur_buf = vim.api.nvim_get_current_buf()
+  local cur_buf = vim.api.nvim_get_current_buf()
 
-    -- Try to switch to an alternate buffer first
-    local alt = vim.fn.bufnr("#")
-    if alt > 0 and vim.api.nvim_buf_is_loaded(alt) then
-        vim.cmd("buffer " .. alt)
-    else
-        -- Otherwise, try to find the next listed buffer
-        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-            if buf ~= cur_buf and vim.fn.buflisted(buf) == 1 then
-                vim.cmd("buffer " .. buf)
-                break
-            end
-        end
+  -- Try to switch to an alternate buffer first
+  local alt = vim.fn.bufnr("#")
+  if alt > 0 and vim.api.nvim_buf_is_loaded(alt) then
+    vim.cmd("buffer " .. alt)
+  else
+    -- Otherwise, try to find the next listed buffer
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if buf ~= cur_buf and vim.fn.buflisted(buf) == 1 then
+        vim.cmd("buffer " .. buf)
+        break
+      end
     end
+  end
 
-    -- Now delete the old buffer
-    vim.cmd("bdelete " .. cur_buf)
+  -- Now delete the old buffer
+  vim.cmd("bdelete " .. cur_buf)
 end, { desc = "smart close current buffer", silent = true })
 map("n", "<leader>bx", "<cmd>bdelete<cr>", { desc = "close current buffer", silent = true })
 map("n", "<leader>bn", "<cmd>BufferLineCycleNext<cr>", { desc = "go to next buffer", silent = true })
@@ -84,13 +80,35 @@ map("n", "<leader>bp", "<cmd>BufferLineCyclePrev<cr>", { desc = "go to previous 
 map("n", "<leader>bc", "<cmd>enew<cr>", { desc = "create empty buffer", silent = true })
 map("n", "<leader>bs", "<cmd>w<cr>", { desc = "save current buffer", silent = true })
 
+-- Save session (default name)
+map("n", "<leader>ss", function()
+  require("mini.sessions").write()
+end, { desc = "Session: Save current session" })
 
+-- Load last session
+map("n", "<leader>sl", function()
+  require("mini.sessions").read()
+end, { desc = "Session: Load last session" })
 
+-- Delete current session
+map("n", "<leader>sd", function()
+  require("mini.sessions").delete()
+end, { desc = "Session: Delete current session" })
 
+-- List saved sessions
+map("n", "<leader>si", function()
+  local sessions = require("mini.sessions").list()
+  vim.notify("Sessions:\n" .. table.concat(sessions, "\n"))
+end, { desc = "Session: List saved sessions" })
 
--- whichkey
-map("n", "<leader>wK", "<cmd>WhichKey <CR>", { desc = "whichkey all keymaps" })
-
-map("n", "<leader>wk", function()
-    vim.cmd("WhichKey " .. vim.fn.input "WhichKey: ")
-end, { desc = "whichkey query lookup" })
+-- Save session with prompt for name
+map("n", "<leader>sp", function()
+  vim.ui.input({ prompt = "Session name: " }, function(input)
+    if input and #input > 0 then
+      require("mini.sessions").write(input)
+      vim.notify("Saved session: " .. input)
+    else
+      vim.notify("Session save cancelled", vim.log.levels.WARN)
+    end
+  end)
+end, { desc = "Session: Save session with prompt" })
